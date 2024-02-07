@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from '../../config/firebase/config'
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db, storage } from '../../config/firebase/config'
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -21,6 +22,27 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
+
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -67,6 +89,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const navigate = useNavigate()
 
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
@@ -82,6 +105,13 @@ export default function SignUp() {
   };
 
 
+  const [SelectImg, setSelectImg] = useState(null)
+  const FileChange = (e) => {
+    const File = e.target.files[0]
+    setSelectImg(File)
+  }
+
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -91,22 +121,35 @@ export default function SignUp() {
     createUserWithEmailAndPassword(auth, data.get('email'), data.get('password'))
       .then((userCredential) => {
         const user = userCredential.user;
-        try {
-          addDoc(collection(db, "AdmissionForm"), {
-            FirstName: data.get('firstName'),
-            LastName: data.get('lastName'),
-            Email: data.get('email'),
-            Address: data.get('address'),
-            Course: personName[0],
-            Gender: data.get('Gender'),
-            Type: 'Student'
-          });
-          
-        } catch {
-          console.log("error");
-        }
-
-
+        const file = SelectImg
+        const storageRef = ref(storage, data.get('email'));
+        uploadBytes(storageRef, file).then((snapshot) => {
+          console.log("Done");
+          getDownloadURL(storageRef)
+            .then((url) => {
+              console.log(url);
+              try {
+                addDoc(collection(db, "AdmissionForm"), {
+                  FirstName: data.get('firstName'),
+                  LastName: data.get('lastName'),
+                  Email: data.get('email'),
+                  Address: data.get('address'),
+                  Course: personName[0],
+                  Gender: data.get('Gender'),
+                  Type: 'Student',
+                  StudentImage: url,
+                  StudentUid: user.uid
+                });
+               navigate('/student') 
+      
+              } catch {
+                console.log("error");
+              }
+            })
+            .catch((error) => {
+              console.log('File is not Download');
+            });
+        })
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -232,12 +275,13 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
+                <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                  Upload file
+                  <VisuallyHiddenInput onChange={FileChange} type="file" />
+                </Button>
               </Grid>
             </Grid>
+
             <Button
               type="submit"
               fullWidth

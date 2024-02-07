@@ -1,4 +1,5 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth } from '../../config/firebase/config'
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +15,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { db } from '../../config/firebase/config'
 
 function Copyright(props) {
   return (
@@ -32,15 +36,33 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Login() {
+
+  const navigate = useNavigate()
+  const [userType, setuserType] = useState()
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+
+
     // LOGIN USER FUNCTION
     signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
-        console.log("hello");
+        const q = query(collection(db, "AdmissionForm"), where('StudentUid', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data().Type);
+          setuserType(doc.data().Type)
+        });
+        if(userType === 'Student'){
+          navigate('/student')
+        }else{
+          navigate('/Admin')
+        }
+
 
       })
       .catch((error) => {
@@ -128,7 +150,7 @@ export default function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link  variant="body2">
+                  <Link variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

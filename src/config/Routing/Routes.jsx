@@ -10,9 +10,9 @@ const Routing = () => {
     <>
     <BrowserRouter>
     <Routes>
-        <Route path='/' element={<Login/>}/>
+        <Route path='' element={<Login/>}/>
         <Route path='Admission' element={<Admissionform/>}/>
-        <Route path='Admin' element={<Admin/>}/>
+        <Route path='Admin/*' element={<Admin/>}/>
         <Route path='student' element={<Student/>}/>
     </Routes>
     </BrowserRouter>
