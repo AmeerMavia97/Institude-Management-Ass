@@ -1,8 +1,9 @@
 import React from 'react'
+import PersistentDrawerRight from '../../components/Drawer'
 
 const Admin = () => {
   return (
-    <div>Admin</div>
+    <PersistentDrawerRight/>
   )
 }
 

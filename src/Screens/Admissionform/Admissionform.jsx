@@ -101,6 +101,7 @@ export default function SignUp() {
             Gender: data.get('Gender'),
             Type: 'Student'
           });
+          
         } catch {
           console.log("error");
         }
