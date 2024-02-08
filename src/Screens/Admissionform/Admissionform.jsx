@@ -55,13 +55,7 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'WEB AND APP DEVELOPER',
-  'FLUTTER',
-  'GRAPHiC DESIGN',
-  'ENGLISH LANGUAGE',
 
-];
 
 function getStyles(name, personName, theme) {
   return {
@@ -89,6 +83,15 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const names = [
+    "Web and App Development",
+    'Flutter',
+    "English language",
+    'Graphic Designing'
+  ];
+
+  console.log(Coursesadd);
+
   const navigate = useNavigate()
 
   const theme = useTheme();
