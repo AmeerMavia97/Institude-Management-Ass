@@ -46,6 +46,7 @@ const Allcourse = () => {
 
   function handleChange(index){
     console.log("helo" ,index );
+    // navigate(`/Admin/singlecourse/${}`)
   }
 
 
@@ -58,7 +59,7 @@ const Allcourse = () => {
      
     {Allcoursedata.map((item , index)=>{
       return(
-    <Card onClick={()=>{handleChange(index)}} sx={{ minWidth: 275 , marginBottom: 2 }}>
+    <Card key={index} onClick={()=>{handleChange(index)}} sx={{ minWidth: 275 , marginBottom: 2 }}>
       <CardContent>
         <Typography variant="h4" component="div">
           {item.CourseName}
@@ -67,7 +68,7 @@ const Allcourse = () => {
           {`Course By: ${item.TeacherName}`}
         </Typography>
         <Typography variant="body2">
-        {`Course By: ${item.WeekDay}`}
+        {`Day: ${item.WeekDay}`}
         </Typography>
       </CardContent>
 

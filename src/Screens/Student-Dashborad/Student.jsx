@@ -5,6 +5,7 @@ import { onAuthStateChanged , signOut  } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from '../../config/firebase/config'
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 
 
 const Student = () => {
@@ -52,7 +53,8 @@ const Student = () => {
   return (
     <>
       <Drawer2 Logut={logout}/>
-      <StudentIdCard names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} />
+      
+      {<StudentIdCard/> ?<StudentIdCard names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} /> : <CircularProgress disableShrink  />  }
     </>
   )
 }

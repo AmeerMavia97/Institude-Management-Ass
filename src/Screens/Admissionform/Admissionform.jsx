@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from '../../config/firebase/config'
 import * as React from 'react';
@@ -26,6 +26,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { CircularProgress } from "@mui/material";
 
 
 
@@ -82,7 +84,33 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
+export default function SignUp({Addcourse}) {
+
+  const [courseAdd, setCourseAdd] = useState([])
+  const [Loading , setLoading] = useState(false)
+
+
+  useEffect(()=>{
+    async function GetCourseInfirebase() {
+      const q = query(collection(db, "Course"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        courseAdd.push({docId: doc.id, ...doc.data() })
+      setCourseAdd([...courseAdd])
+  
+      });
+  
+  
+    }
+    GetCourseInfirebase()
+
+  }, [])
+
+  console.log(courseAdd);
+
+
+
+
   const names = [
     "Web and App Development",
     'Flutter',
@@ -90,7 +118,6 @@ export default function SignUp() {
     'Graphic Designing'
   ];
 
-  console.log(Coursesadd);
 
   const navigate = useNavigate()
 
@@ -118,6 +145,7 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setLoading(!Loading)
     const data = new FormData(event.currentTarget);
 
     // ADMISSIONFORM
@@ -225,15 +253,16 @@ export default function SignUp() {
                   input={<OutlinedInput label="Course" />}
                   MenuProps={MenuProps}
                 >
-                  {names.map((name) => (
+                  {courseAdd.map((item) => (
                     <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, personName, theme)}
+                      key={item.CourseName}
+                      value={item.CourseName}
+                      style={getStyles(item.CourseName, personName, theme)}
                     >
-                      {name}
+                      {item.CourseName}
                     </MenuItem>
                   ))}
+
                 </Select>
               </FormControl>
               <Grid item xs={12} >
@@ -291,7 +320,7 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {Loading ? <CircularProgress disableShrink sx={{color: 'white' , padding: 1}} />: "Admission"  }
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

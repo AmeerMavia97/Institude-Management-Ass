@@ -18,6 +18,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { db } from '../../config/firebase/config'
+import { CircularProgress } from "@mui/material";
 
 function Copyright(props) {
   return (
@@ -39,10 +40,12 @@ export default function Login() {
 
   const navigate = useNavigate()
   const [userType, setuserType] = useState()
+  const [Loading , setLoading] = useState(false)
 
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setLoading(!Loading)
     const data = new FormData(event.currentTarget);
 
 
@@ -141,7 +144,7 @@ export default function Login() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                {Loading ?  <CircularProgress disableShrink sx={{padding: 1 , color: 'white'}}/> : 'Login'}
               </Button>
               <Grid container>
                 <Grid item xs>

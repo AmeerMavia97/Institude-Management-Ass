@@ -12,9 +12,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Singlestudent from '../Singlestudent/Singlestudent';
 
 
 function Allstudent() { 
+
+  const navigate = useNavigate()
   const [AllStudentdata , setAllStudentdata] = useState([])
 
 
@@ -41,16 +45,23 @@ async  function deleteStudent(index){
     }
     GetAllstudent()
 
-
   }, [])
+
+  function handlechange(index){
+    console.log(index);
+    navigate(`/Admin/singlestudent/${index}`)
+  
+
+  }
+
 
   return (
     <>
     {AllStudentdata.map((item , index)=>{
       return(
         <>
-      <AppBar key={index} position="static" sx={{marginBottom: 2 }}>
-      <Container key={index} sx={{display: 'flex',  justifyContent: 'space-between' }} maxWidth="xl">
+      <AppBar  onClick={()=>{handlechange(item.StudentUid)}}  position="static" sx={{marginBottom: 2 }}>
+      <Container  sx={{display: 'flex',  justifyContent: 'space-between' }} maxWidth="xl">
         <Toolbar disableGutters>
         <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -58,6 +69,7 @@ async  function deleteStudent(index){
             </Tooltip>
           </Box>
           <Typography
+          key={index}
             variant="h6"
             noWrap
             component="a"
@@ -73,11 +85,12 @@ async  function deleteStudent(index){
           >
             {item.FirstName + item.LastName} 
           </Typography>
-          <Typography
+          {/* <Typography
+          key={index}
+
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               ml: 2,
               display: { xs: 'flex', md: 'none' },
@@ -91,16 +104,19 @@ async  function deleteStudent(index){
           >
             {item.FirstName + item.LastName} 
             
-          </Typography>
+          </Typography> */}
 
 
           
         </Toolbar>
-    <DeleteIcon key={index} onClick={()=>{deleteStudent(index)}} sx={{ display: { xs: 'flex',   } , marginTop: 2  }} /> 
+       <DeleteIcon key={index} onClick={()=>{deleteStudent(index)}} sx={{ display: { xs: 'flex',   } , marginTop: 2  }} /> 
 
       </Container>
 
     </AppBar>
+
+
+
 
     </>
       )
