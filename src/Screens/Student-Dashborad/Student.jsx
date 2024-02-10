@@ -18,6 +18,8 @@ const Student = () => {
   const [StudentEmail , setStudentEmail] = useState()
   const [StudentCourse , setStudentCourse] = useState()
   const [StudentImage , setStudentImage] = useState()
+  const [Gender , setGender] = useState()
+  const [Address , setAddress] = useState()
 
 
   onAuthStateChanged(auth,async (user) => {
@@ -32,6 +34,8 @@ const Student = () => {
         setStudentEmail(doc.data().Email)
         setStudentCourse(doc.data().Course)
         setStudentImage(doc.data().StudentImage)
+        setAddress(doc.data().Address)
+        setGender(doc.data().Gender)
 
       });
     } else {
@@ -48,13 +52,15 @@ const Student = () => {
     
   }
 
+  console.log(Gender);
+
 
 
   return (
     <>
       <Drawer2 Logut={logout}/>
       
-      {<StudentIdCard/> ?<StudentIdCard names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} /> : <CircularProgress disableShrink  />  }
+      {<StudentIdCard/> ? <StudentIdCard names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} gender={Gender} address={Address} /> : <CircularProgress disableShrink  />  }
     </>
   )
 }

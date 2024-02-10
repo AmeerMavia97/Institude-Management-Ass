@@ -21,7 +21,7 @@ const style = {
     backgroundColor: 'background.paper',
 };
 
-export default function StudentIdCard({ image, names, course, email , gender , address }) {
+export default function AdminIdCard({ image, names, course, email , gender , address }) {
     const theme = useTheme();
 
     return (
@@ -30,7 +30,7 @@ export default function StudentIdCard({ image, names, course, email , gender , a
 
             <Box sx={{ display: 'flex', gap: 5, justifyContent: 'center' }}>
 
-                <Card sx={{width: 300}}>
+                <Card sx={{width: 290}}>
                     <Typography sx={{ textAlign: 'center', flexGrow: 1, marginTop: 2 }}
                         component="div" variant="h5">
                         IM SYSTEM

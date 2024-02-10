@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Singlestudent from '../Singlestudent/Singlestudent';
+import { CircularProgress } from '@mui/material';
 
 
 function Allstudent() { 
@@ -57,7 +58,7 @@ async  function deleteStudent(index){
 
   return (
     <>
-    {AllStudentdata.map((item , index)=>{
+    {AllStudentdata.length > 0 ? AllStudentdata.map((item , index)=>{
       return(
         <>
       <AppBar  onClick={()=>{handlechange(item.StudentUid)}}  position="static" sx={{marginBottom: 2 }}>
@@ -120,7 +121,8 @@ async  function deleteStudent(index){
 
     </>
       )
-    })}
+    }) : <CircularProgress sx={{marginLeft: 65 , marginTop: 2}} />  
+  }
     </>
   );
 }

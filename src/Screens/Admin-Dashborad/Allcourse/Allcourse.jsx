@@ -7,6 +7,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, CardActionArea, CardActions, CardMedia, CircularProgress } from '@mui/material';
 
 const bull = (
   <Box
@@ -19,6 +21,7 @@ const bull = (
 
 const Allcourse = () => {
 
+  const navigate = useNavigate()
   const [Allcoursedata , setAllcoursedata] = useState([])
 
 
@@ -44,9 +47,9 @@ const Allcourse = () => {
 
 
 
+
   function handleChange(index){
-    console.log("helo" ,index );
-    // navigate(`/Admin/singlecourse/${}`)
+    navigate(`/Admin/singlecourse/${index}`)
   }
 
 
@@ -57,25 +60,31 @@ const Allcourse = () => {
 
     <>
      
-    {Allcoursedata.map((item , index)=>{
+    {Allcoursedata.length > 0 ?  Allcoursedata.map((item , index)=>{
       return(
-    <Card key={index} onClick={()=>{handleChange(index)}} sx={{ minWidth: 275 , marginBottom: 2 }}>
-      <CardContent>
-        <Typography variant="h4" component="div">
+        <Card key={index} onClick={()=>{handleChange(item.docId)}} sx={{marginLeft: 46 , marginTop:1 , display: 'flex' ,  maxWidth: 290 }}>
+        <CardActionArea>
+        <CardContent>
+          <Typography sx={{textAlign: 'center' , marginTop: 2}} gutterBottom variant="h5" component="div">
           {item.CourseName}
-        </Typography>
-        <Typography sx={{ mb: 1 }} color="text.secondary">
-          {`Course By: ${item.TeacherName}`}
-        </Typography>
-        <Typography variant="body2">
-        {`Day: ${item.WeekDay}`}
-        </Typography>
-      </CardContent>
+          </Typography>
+          <Typography sx={{textAlign: 'center' }}  variant="body2" color="text.secondary">
+          {`Course By: ${item.TeacherName}`} <br />
+          </Typography>
+          <Typography sx={{textAlign: 'center' , marginTop: 1 , marginBottom: 2}}  variant="body2" color="text.secondary">
+          {`Day: ${item.WeekDay}`}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
 
-    </Card> 
       )
     
-    })}
+    }) : <CircularProgress sx={{marginLeft: 65 , marginTop: 2}} /> 
+  }
+
+
+
 
     </>
  

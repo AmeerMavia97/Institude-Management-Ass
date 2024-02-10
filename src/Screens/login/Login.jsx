@@ -58,13 +58,14 @@ export default function Login() {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           console.log(doc.id, " => ", doc.data().Type);
+          if(doc.data().Type === 'Student'){
+            navigate('/student')
+          }else{
+            navigate('/Admin')
+          }
           setuserType(doc.data().Type)
         });
-        if(userType === 'Student'){
-          navigate('/student')
-        }else{
-          navigate('/Admin')
-        }
+       
 
 
       })
