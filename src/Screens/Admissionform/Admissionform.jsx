@@ -201,6 +201,8 @@ export default function SignUp({Addcourse}) {
     });
   };
 
+  
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -324,7 +326,7 @@ export default function SignUp({Addcourse}) {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link onclick={()=>{navigate('/')}} href="#" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
