@@ -58,9 +58,11 @@ const Student = () => {
 
   return (
     <>
-      <Drawer2 Logut={logout}/>
+
+
+      <Drawer2  Logut={logout}/>
       
-      {<StudentIdCard/> ? <StudentIdCard names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} gender={Gender} address={Address} /> : <CircularProgress disableShrink  />  }
+      {<StudentIdCard/> ? <StudentIdCard  names={StudentName} email={StudentEmail} course={StudentCourse} image={StudentImage} gender={Gender} address={Address} /> : <CircularProgress disableShrink  />  }
     </>
   )
 }

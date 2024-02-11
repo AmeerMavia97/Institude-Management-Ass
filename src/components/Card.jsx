@@ -43,10 +43,10 @@ export default function StudentIdCard({ image, names, course, email , gender , a
                     /> : <CircularProgress disableShrink sx={{ marginLeft: 20, marginTop: 5, marginBottom: 5 }} />}
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flex: '1 0 auto' }}>
-                            <Typography sx={{ textAlign: 'center', flexGrow: 1, marginTop: 1 }} component="div" color="text.secondary" variant="h5">
+                            <Typography sx={{ textAlign: 'center', flexGrow: 1, marginTop: 0 }} component="div" color="text.secondary" variant="h5">
                                 {names}
                             </Typography>
-                            <Typography sx={{ textAlign: 'center', marginTop: 1, flexGrow: 30, }} variant="h6" component="div">
+                            <Typography sx={{ textAlign: 'center', marginTop: 0, flexGrow: 30, }} variant="h6" component="div">
                                 {course}
                             </Typography>
                             <Typography sx={{ textAlign: 'center', marginBottom: 2, flexGrow: 30, }} variant="p" color='text.secondary' component="div">

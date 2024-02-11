@@ -19,6 +19,8 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../config/firebase/config';
+import { signOut } from 'firebase/auth';
 
 const drawerWidth = 250;
 
@@ -98,10 +100,22 @@ export default function PersistentDrawerRight({screen}) {
     if(text === 'Single Course'){
       navigate('/admin/singlecourse')
       return
+    }if(text === 'Logout'){
+      // navigate('/')
+        signOut(auth).then(() => {
+          navigate('/')
+        }).catch((error) => {
+          console.log(error);
+        });
+        
+      
+      return
     }
 
   }
 
+
+ 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -144,7 +158,7 @@ export default function PersistentDrawerRight({screen}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Add Course', 'All Course', 'All Student', 'Single Course'].map((text, index) => (
+          {['Add Course', 'All Course', 'All Student', 'Single Course' , 'Logout'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>

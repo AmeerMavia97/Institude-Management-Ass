@@ -99,7 +99,7 @@ const Singlecourse = () => {
       
     </Card>: <CircularProgress sx={{marginLeft: 65 , marginTop: 2}} />  }
 
-    {StudentList ?
+    {StudentList.length > 0 ?
      StudentList.map((item , index)=>{
       return(
         <>
@@ -161,7 +161,7 @@ const Singlecourse = () => {
       )
     })
      
-     : <CircularProgress sx={{marginLeft: 65 , marginTop: 2}} />  } 
+     : <Typography variant='h5' sx={{textAlign: 'center' , marginTop: 3}}>Student Are Not Available In This Course</Typography>  } 
     
     </>
   )

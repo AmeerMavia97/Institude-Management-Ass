@@ -28,7 +28,7 @@ export default function AdminIdCard({ image, names, course, email , gender , add
 
         <>
 
-            <Box sx={{ display: 'flex', gap: 5, justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', gap: 5, justifyContent: 'center'  }}>
 
                 <Card sx={{width: 290}}>
                     <Typography sx={{ textAlign: 'center', flexGrow: 1, marginTop: 2 }}
