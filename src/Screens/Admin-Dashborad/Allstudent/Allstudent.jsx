@@ -1,129 +1,349 @@
-import * as React from 'react';
-import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from '../../../config/firebase/config'
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import AdbIcon from '@mui/icons-material/Adb';
-import { useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Singlestudent from '../Singlestudent/Singlestudent';
-import { CircularProgress } from '@mui/material';
+import * as React from "react";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+
+import { db } from "../../../config/firebase/config";
+
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
-function Allstudent() { 
+function Allstudent() {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-  const [AllStudentdata , setAllStudentdata] = useState([])
+  const [AllStudentdata, setAllStudentdata] = useState([]);
+
+  // Loading state
+  const [loading, setLoading] = useState(true);
+
+  // Delete dialog state
+  const [openDialog, setOpenDialog] = useState(false);
+
+  // Student we want to delete
+  const [studentToDelete, setStudentToDelete] = useState(null);
+
+  // Delete loading
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
 
-async  function deleteStudent(index){
-    await deleteDoc(doc(db, "AdmissionForm", AllStudentdata[index].docId));
-    AllStudentdata.splice(index, 1)
-    setAllStudentdata([...AllStudentdata])
-  }
-
+  // ==============================
+  // GET ALL STUDENTS
+  // ==============================
 
   useEffect(() => {
-  
-  async  function GetAllstudent(){
-      const q = query(collection(db, "AdmissionForm"), where("Type" , "==" , "Student"));
+    async function GetAllstudent() {
+      try {
+        setLoading(true);
 
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        AllStudentdata.push({docId: doc.id, ...doc.data() })
-        setAllStudentdata([...AllStudentdata])
-        // setCourse(doc.data().CourseName)
-        // setWeekday(doc.data().WeekDay)
-      
-      });
+        const q = query(
+          collection(db, "AdmissionForm"),
+          where("Type", "==", "Student")
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const students = [];
+
+        querySnapshot.forEach((document) => {
+          students.push({
+            docId: document.id,
+            ...document.data(),
+          });
+        });
+
+        setAllStudentdata(students);
+      } catch (error) {
+        console.error("Error getting students:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-    GetAllstudent()
 
-  }, [])
+    GetAllstudent();
+  }, []);
 
-  function handlechange(index){
-    console.log(index);
-    navigate(`/Admin/singlestudent/${index}`)
-  
 
+  // ==============================
+  // OPEN DELETE CONFIRMATION
+  // ==============================
+
+  function handleDeleteClick(event, student, index) {
+    // VERY IMPORTANT
+    // Prevent AppBar onClick from firing
+    event.stopPropagation();
+
+    setStudentToDelete({
+      student,
+      index,
+    });
+
+    setOpenDialog(true);
   }
 
+
+  // ==============================
+  // CANCEL DELETE
+  // ==============================
+
+  function handleCancelDelete() {
+    if (deleteLoading) return;
+
+    setOpenDialog(false);
+    setStudentToDelete(null);
+  }
+
+
+  // ==============================
+  // CONFIRM DELETE
+  // ==============================
+
+  async function handleConfirmDelete() {
+    if (!studentToDelete) return;
+
+    try {
+      setDeleteLoading(true);
+
+      const { student, index } = studentToDelete;
+
+      // Delete from Firestore
+      await deleteDoc(
+        doc(db, "AdmissionForm", student.docId)
+      );
+
+      // Remove from local state
+      setAllStudentdata((prevStudents) =>
+        prevStudents.filter((_, i) => i !== index)
+      );
+
+      // Close dialog
+      setOpenDialog(false);
+      setStudentToDelete(null);
+
+    } catch (error) {
+      console.error("Error deleting student:", error);
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
+
+  // ==============================
+  // OPEN SINGLE STUDENT
+  // ==============================
+
+  function handleChange(studentUid) {
+    console.log("Student UID:", studentUid);
+
+    navigate(`/Admin/singlestudent/${studentUid}`);
+  }
+
+
+  // ==============================
+  // LOADING
+  // ==============================
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 4,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+
+  // ==============================
+  // UI
+  // ==============================
 
   return (
     <>
-    {AllStudentdata.length > 0 ? AllStudentdata.map((item , index)=>{
-      return(
-        <>
-      <AppBar  onClick={()=>{handlechange(item.StudentUid)}}  position="static" sx={{marginBottom: 2 }}>
-      <Container  sx={{display: 'flex',  justifyContent: 'space-between' }} maxWidth="xl">
-        <Toolbar disableGutters>
-        <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-            <Avatar alt="Remy Sharp" src={item.StudentImage} />
-            </Tooltip>
-          </Box>
-          <Typography
-          key={index}
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              ml: 2,
-              display: { xs: 'none', md: 'flex'  },
-              
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
+      {AllStudentdata.length > 0 ? (
+        AllStudentdata.map((item, index) => {
+          return (
+            <AppBar
+              key={item.docId}
+              position="static"
+              onClick={() => handleChange(item.StudentUid)}
+              sx={{
+                marginBottom: 2,
+                cursor: "pointer",
+              }}
+            >
+              <Container
+                maxWidth="xl"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Toolbar disableGutters>
+
+                  {/* Avatar */}
+                  <Box sx={{ flexGrow: 0 }}>
+                    <Tooltip title="Open student">
+                      <Avatar
+                        alt={`${item.FirstName} ${item.LastName}`}
+                        src={item.StudentImage}
+                      />
+                    </Tooltip>
+                  </Box>
+
+
+                  {/* Student Name */}
+                  <Typography
+                    variant="h6"
+                    noWrap
+                    component="a"
+                    sx={{
+                      ml: 2,
+                      display: {
+                        xs: "none",
+                        md: "flex",
+                      },
+                      fontWeight: 700,
+                      letterSpacing: ".3rem",
+                      color: "inherit",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {item.FirstName} {item.LastName}
+                  </Typography>
+
+                </Toolbar>
+
+
+                {/* DELETE BUTTON */}
+
+                <DeleteIcon
+                  onClick={(event) =>
+                    handleDeleteClick(
+                      event,
+                      item,
+                      index
+                    )
+                  }
+                  sx={{
+                    display: {
+                      xs: "flex",
+                    },
+                    marginTop: 2,
+                    cursor: "pointer",
+
+                    "&:hover": {
+                      color: "red",
+                    },
+                  }}
+                />
+
+              </Container>
+            </AppBar>
+          );
+        })
+      ) : (
+        <Typography
+          sx={{
+            textAlign: "center",
+            mt: 4,
+          }}
+        >
+          No students found.
+        </Typography>
+      )}
+
+
+      {/* ================================= */}
+      {/* DELETE CONFIRMATION DIALOG */}
+      {/* ================================= */}
+
+      <Dialog
+        open={openDialog}
+        onClose={handleCancelDelete}
+      >
+        <DialogTitle>
+          Delete Student?
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete{" "}
+            <strong>
+              {studentToDelete?.student?.FirstName}{" "}
+              {studentToDelete?.student?.LastName}
+            </strong>
+            ?
+
+            <br />
+
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+
+          {/* CANCEL */}
+
+          <Button
+            onClick={handleCancelDelete}
+            disabled={deleteLoading}
           >
-            {item.FirstName + item.LastName} 
-          </Typography>
-          {/* <Typography
-          key={index}
+            Cancel
+          </Button>
 
-            variant="h5"
-            noWrap
-            component="a"
-            sx={{
-              ml: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
+
+          {/* DELETE */}
+
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            disabled={deleteLoading}
           >
-            {item.FirstName + item.LastName} 
-            
-          </Typography> */}
+            {deleteLoading ? (
+              <CircularProgress
+                size={22}
+                color="inherit"
+              />
+            ) : (
+              "Delete"
+            )}
+          </Button>
 
-
-          
-        </Toolbar>
-       <DeleteIcon key={index} onClick={()=>{deleteStudent(index)}} sx={{ display: { xs: 'flex',   } , marginTop: 2  }} /> 
-
-      </Container>
-
-    </AppBar>
-
-
-
-
-    </>
-      )
-    }) : <CircularProgress sx={{marginLeft: 65 , marginTop: 2}} />  
-  }
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
+
 export default Allstudent;
